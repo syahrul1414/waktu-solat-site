@@ -1,49 +1,152 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Waktu Solat Malaysia</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Times</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-white text-gray-900 font-sans">
+<body class="bg-white text-black font-inter">
+    <div class="min-h-screen">
+        <!-- Header Section -->
+        <header class="text-center pt-8 pb-6 px-4">
+            <!-- Hijri Date -->
+            <h1 class="text-2xl md:text-3xl font-bold text-black mb-2">
+                26 Muharram 1447
+            </h1>
+            
+            <!-- Gregorian Date -->
+            <p class="text-lg md:text-xl text-gray-700 mb-4">
+                Tue, 22 Jul 2025
+            </p>
+            
+            <!-- Location -->
+            <p class="text-sm text-gray-500">
+                Gombak, Petaling, Sepang, Shah Alam
+            </p>
+        </header>
 
-  <!-- Header -->
-  <header class="text-center py-6">
-    <h1 class="text-3xl font-semibold">Waktu Solat Malaysia</h1>
-    <p class="text-sm text-gray-500">Powered by Herepay</p>
-  </header>
+        <!-- Main Content -->
+        <main class="px-4 pb-8">
+            <div class="max-w-4xl mx-auto">
+                <!-- Current Prayer Card -->
+                <div class="mb-6">
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 md:p-8 shadow-lg border border-gray-100 relative overflow-hidden">
+                        <!-- Background decoration -->
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-200/30 to-transparent rounded-full -mr-16 -mt-16"></div>
+                        
+                        <div class="relative z-10">
+                            <!-- NOW Badge -->
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 mb-4">
+                                NOW
+                            </div>
+                            
+                            <!-- Prayer Name -->
+                            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                                Fajr
+                            </h2>
+                            
+                            <!-- Prayer Time -->
+                            <p class="text-xl md:text-2xl font-semibold text-gray-700">
+                                05:59 AM
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Current & Next Prayer -->
-  <section class="text-center py-6">
-    <p class="text-lg">Sekarang: <span id="current-prayer" class="font-bold">Zohor</span></p>
-    <p class="text-md text-gray-600">Seterusnya: <span id="next-prayer">Asar dalam 1 jam 20 minit</span></p>
-  </section>
+                <!-- Next Prayer Countdown -->
+                <div class="text-center mb-8">
+                    <p class="text-lg text-gray-600">
+                        Next prayer in <span class="font-semibold text-gray-800">00:20:01</span>
+                    </p>
+                </div>
 
-  <!-- Grid of Today's Waktu Solat -->
-  <section class="max-w-md mx-auto mt-8 px-4">
-    <div class="grid grid-cols-2 gap-4 text-center border border-gray-200 rounded-lg p-4">
-      <div>Subuh</div><div id="subuh">05:42 AM</div>
-      <div>Syuruk</div><div id="syuruk">07:02 AM</div>
-      <div>Zohor</div><div id="zohor">12:58 PM</div>
-      <div>Asar</div><div id="asar">04:22 PM</div>
-      <div>Maghrib</div><div id="maghrib">07:25 PM</div>
-      <div>Isyak</div><div id="isyak">08:38 PM</div>
+                <!-- Remaining Prayer Cards Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                    <!-- Dhuhr -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Dhuhr</h3>
+                        <p class="text-xl font-bold text-gray-900">01:15 PM</p>
+                    </div>
+
+                    <!-- Asr -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Asr</h3>
+                        <p class="text-xl font-bold text-gray-900">04:45 PM</p>
+                    </div>
+
+                    <!-- Maghrib -->
+                    <div class="bg-gradient-to-br from-purple-50 to-violet-100 rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Maghrib</h3>
+                        <p class="text-xl font-bold text-gray-900">07:32 PM</p>
+                    </div>
+
+                    <!-- Isha -->
+                    <div class="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl p-4 md:p-5 shadow-sm border border-gray-100 col-span-2 md:col-span-3">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Isha</h3>
+                        <p class="text-xl font-bold text-gray-900">08:55 PM</p>
+                    </div>
+                </div>
+
+                <!-- Infaq Button -->
+                <div class="text-center mb-12">
+                    <a href="https://infaq.herepay.org" 
+                       target="_blank" 
+                       class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                        Berinfaq Hari Ini
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-50 py-8 mt-12">
+            <div class="text-center">
+                <p class="text-gray-500 text-sm">
+                    © 2025 Prayer Times. All rights reserved.
+                </p>
+            </div>
+        </footer>
     </div>
-  </section>
 
-  <!-- Infaq Section -->
-  <section class="text-center mt-10 px-4">
-    <a href="https://infaq.herepay.org" class="inline-block bg-green-600 text-white text-sm px-6 py-3 rounded-full shadow hover:bg-green-700 transition">
-      Berinfaq Hari Ini
-    </a>
-  </section>
+    <script>
+        // Simple countdown timer for demonstration
+        function updateCountdown() {
+            const countdownElement = document.querySelector('.text-lg span');
+            if (countdownElement) {
+                // This is just a demo - in a real app, you'd calculate the actual time until next prayer
+                const now = new Date();
+                const seconds = now.getSeconds();
+                const minutes = now.getMinutes();
+                const hours = now.getHours();
+                
+                // Mock countdown that changes every second
+                const mockHours = Math.floor(Math.random() * 7);
+                const mockMinutes = Math.floor(Math.random() * 60);
+                const mockSeconds = Math.floor(Math.random() * 60);
+                
+                const timeString = `${mockHours.toString().padStart(2, '0')}:${mockMinutes.toString().padStart(2, '0')}:${mockSeconds.toString().padStart(2, '0')}`;
+                countdownElement.textContent = timeString;
+            }
+        }
 
-  <!-- Footer -->
-  <footer class="text-center text-xs text-gray-400 mt-12 mb-4">
-    &copy; 2025 Waktu Solat by Herepay. Built with ❤️ in Malaysia.
-  </footer>
-
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call
+    </script>
 </body>
 </html>
