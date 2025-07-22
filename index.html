@@ -112,6 +112,7 @@ async function fetchPrayerTimes() {
 
   const today = data.prayerTime[0];
 
+  document.getElementById('fajr-time').textContent = today.subuh;
   document.getElementById('dhuhr-time').textContent = today.zohor;
   document.getElementById('asr-time').textContent = today.asar;
   document.getElementById('maghrib-time').textContent = today.maghrib;
