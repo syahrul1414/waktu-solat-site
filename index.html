@@ -105,9 +105,9 @@
 
     setInterval(updateCountdown, 1000);
     updateCountdown();
-  </script>
+<script>
   async function fetchPrayerTimes() {
-    const response = await fetch('https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=day&zone=SGR01'); // Selangor zone
+    const response = await fetch('https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=day&zone=SGR01');
     const data = await response.json();
 
     const today = data.prayerTime[0];
