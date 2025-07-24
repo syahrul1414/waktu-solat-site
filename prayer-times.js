@@ -67,9 +67,9 @@ class PrayerTimesAPI {
     if (!prayerTimes) return { name: 'Fajr', time: '05:59 AM' };
 
     // Use Malaysian timezone (UTC+8)
-    const now = new Date();
-    const malaysianTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-    const currentTime = malaysianTime.getUTCHours() * 60 + malaysianTime.getUTCMinutes();
+    const malaysiaTimeString = new Date().toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
+    const now = new Date(malaysiaTimeString);
+    const currentTime = now.getHours() * 60 + now.getMinutes();
 
     const prayers = [
       { name: 'Fajr', time: prayerTimes.fajr },
@@ -110,9 +110,9 @@ class PrayerTimesAPI {
     if (!prayerTimes) return { name: 'Fajr', time: '05:59 AM', status: 'Current Prayer' };
 
     // Use Malaysian timezone (UTC+8)
-    const now = new Date();
-    const malaysianTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-    const currentTime = malaysianTime.getUTCHours() * 60 + malaysianTime.getUTCMinutes();
+    const malaysiaTimeString = new Date().toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
+    const now = new Date(malaysiaTimeString);
+    const currentTime = now.getHours() * 60 + now.getMinutes();
 
     const prayers = [
       { name: 'Fajr', time: prayerTimes.fajr },
