@@ -27,7 +27,7 @@
           <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 md:p-8 shadow-lg border border-gray-100 relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-200/30 to-transparent rounded-full -mr-16 -mt-16"></div>
             <div class="relative z-10">
-              <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 mb-4">NOW</div>
+              <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 mb-4" id="current-prayer-status">Current Prayer</div>
               <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2" id="current-prayer-name">Fajr</h2>
               <p class="text-xl md:text-2xl font-semibold text-gray-700" id="current-prayer-time">05:59 AM</p>
             </div>
@@ -70,7 +70,7 @@
         </div>
 
         <!-- Infaq Button -->
-        <div class="text-center mb-4">
+        <div class="text-center mb-12">
           <a href="https://app.herepay.org/pibg-tkc/wifi" 
              target="_blank" 
              class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
@@ -78,6 +78,24 @@
           </a>
         </div>
       </div>
+        <!-- Islamic Quotes -->
+        <div class="max-w-2xl mx-auto mb-12">
+          <div class="bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl p-6 md:p-8 shadow-lg border border-gray-100">
+            <div class="text-center">
+              <div class="mb-4">
+                <svg class="w-8 h-8 text-emerald-600 mx-auto mb-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
+                </svg>
+              </div>
+              <blockquote class="text-lg md:text-xl text-gray-800 font-medium mb-4 italic" id="quote-text">
+                "Indeed, those who believe and do righteous deeds and establish prayer and give zakah will have their reward with their Lord, and there will be no fear concerning them, nor will they grieve."
+              </blockquote>
+              <cite class="text-sm text-gray-600 font-semibold" id="quote-source">
+                — Quran 2:277
+              </cite>
+            </div>
+          </div>
+        </div>
     </main>
 
     <!-- Footer -->

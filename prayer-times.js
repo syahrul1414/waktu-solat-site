@@ -101,6 +101,67 @@ class PrayerTimesAPI {
     };
   }
 
+  // Get current prayer with status info
+  getCurrentPrayerInfo(prayerTimes) {
+    if (!prayerTimes) return { name: 'Fajr', time: '05:59 AM', status: 'Current Prayer' };
+
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    const prayers = [
+      { name: 'Fajr', time: prayerTimes.fajr },
+      { name: 'Dhuhr', time: prayerTimes.dhuhr },
+      { name: 'Asr', time: prayerTimes.asr },
+      { name: 'Maghrib', time: prayerTimes.maghrib },
+      { name: 'Isha', time: prayerTimes.isha }
+    ];
+
+    // Convert prayer times to minutes
+    const prayerMinutes = prayers.map(prayer => {
+      const [hours, minutes] = prayer.time.split(':');
+      return {
+        ...prayer,
+        minutes: parseInt(hours) * 60 + parseInt(minutes)
+      };
+    });
+
+    // Find current prayer and determine status
+    let currentPrayer = prayerMinutes[0]; // Default to Fajr
+    let status = 'Current Prayer';
+    
+    for (let i = 0; i < prayerMinutes.length; i++) {
+      if (currentTime >= prayerMinutes[i].minutes) {
+        currentPrayer = prayerMinutes[i];
+        
+        // Check if we're past this prayer time by more than a reasonable window
+        const nextPrayerIndex = (i + 1) % prayerMinutes.length;
+        const nextPrayer = prayerMinutes[nextPrayerIndex];
+        
+        // If it's the last prayer of the day, check against tomorrow's Fajr
+        if (i === prayerMinutes.length - 1) {
+          // After Isha, before midnight - still current
+          status = 'Current Prayer';
+        } else if (currentTime < nextPrayer.minutes) {
+          // Between current and next prayer
+          const timeSincePrayer = currentTime - currentPrayer.minutes;
+          if (timeSincePrayer > 30) { // More than 30 minutes past
+            status = 'Has Passed';
+          } else {
+            status = 'Current Prayer';
+          }
+        }
+      } else {
+        break;
+      }
+    }
+
+    return {
+      name: currentPrayer.name,
+      time: this.formatTime(currentPrayer.time),
+      status: status
+    };
+  }
+
   // Get next prayer and countdown
   getNextPrayerCountdown(prayerTimes) {
     if (!prayerTimes) return { nextPrayer: 'Dhuhr', countdown: '00:00:00' };
@@ -285,6 +346,9 @@ async function updatePrayerTimes() {
     const currentPrayerData = await prayerAPI.getCurrentPrayerTimes();
     
     if (currentPrayerData) {
+      // Get current prayer info
+      const currentPrayerInfo = prayerAPI.getCurrentPrayerInfo(currentPrayerData);
+      
       // Update individual prayer times
       document.getElementById('fajr-time').textContent = prayerAPI.formatTime(currentPrayerData.fajr);
       document.getElementById('dhuhr-time').textContent = prayerAPI.formatTime(currentPrayerData.dhuhr);
@@ -292,10 +356,10 @@ async function updatePrayerTimes() {
       document.getElementById('maghrib-time').textContent = prayerAPI.formatTime(currentPrayerData.maghrib);
       document.getElementById('isha-time').textContent = prayerAPI.formatTime(currentPrayerData.isha);
 
-      // Update current prayer
-      const currentPrayer = prayerAPI.getCurrentPrayer(currentPrayerData);
-      document.getElementById('current-prayer-name').textContent = currentPrayer.name;
-      document.getElementById('current-prayer-time').textContent = currentPrayer.time;
+      // Update current prayer card
+      document.getElementById('current-prayer-name').textContent = currentPrayerInfo.name;
+      document.getElementById('current-prayer-time').textContent = currentPrayerInfo.time;
+      document.getElementById('current-prayer-status').textContent = currentPrayerInfo.status;
 
       // Update dates
       const dates = prayerAPI.formatDates(currentPrayerData);
@@ -340,4 +404,82 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   // Update prayer times every hour
   setInterval(updatePrayerTimes, 60 * 60 * 1000);
+  
+  // Initialize quote rotation
+  rotateQuote();
+  
+  // Rotate quotes every 30 seconds
+  setInterval(rotateQuote, 30000);
 });
+
+// Islamic quotes from Quran and authentic Hadith
+const islamicQuotes = [
+  {
+    text: "Indeed, those who believe and do righteous deeds and establish prayer and give zakah will have their reward with their Lord, and there will be no fear concerning them, nor will they grieve.",
+    source: "Quran 2:277"
+  },
+  {
+    text: "And whoever relies upon Allah - then He is sufficient for him. Indeed, Allah will accomplish His purpose.",
+    source: "Quran 65:3"
+  },
+  {
+    text: "The believer is not one who eats his fill while his neighbor goes hungry.",
+    source: "Hadith - Al-Adab Al-Mufrad"
+  },
+  {
+    text: "And it is He who created the heavens and earth in truth. And the day He says, 'Be,' and it is, His word is the truth.",
+    source: "Quran 6:73"
+  },
+  {
+    text: "Charity does not decrease wealth, no one forgives another except that Allah increases his honor, and no one humbles himself for the sake of Allah except that Allah raises his status.",
+    source: "Hadith - Sahih Muslim"
+  },
+  {
+    text: "And whoever fears Allah - He will make for him a way out. And will provide for him from where he does not expect.",
+    source: "Quran 65:2-3"
+  },
+  {
+    text: "The example of those who spend their wealth in the way of Allah is like a seed which grows seven spikes; in each spike is a hundred grains.",
+    source: "Quran 2:261"
+  },
+  {
+    text: "None of you truly believes until he loves for his brother what he loves for himself.",
+    source: "Hadith - Sahih Bukhari"
+  },
+  {
+    text: "And give good tidings to the patient, Who, when disaster strikes them, say, 'Indeed we belong to Allah, and indeed to Him we will return.'",
+    source: "Quran 2:155-156"
+  },
+  {
+    text: "The upper hand is better than the lower hand. The upper hand is the one that gives, and the lower hand is the one that receives.",
+    source: "Hadith - Sahih Bukhari"
+  }
+];
+
+let currentQuoteIndex = 0;
+
+// Function to rotate quotes
+function rotateQuote() {
+  const quoteText = document.getElementById('quote-text');
+  const quoteSource = document.getElementById('quote-source');
+  
+  if (quoteText && quoteSource) {
+    // Add fade out effect
+    quoteText.style.opacity = '0';
+    quoteSource.style.opacity = '0';
+    
+    setTimeout(() => {
+      // Update quote content
+      const currentQuote = islamicQuotes[currentQuoteIndex];
+      quoteText.textContent = `"${currentQuote.text}"`;
+      quoteSource.textContent = `— ${currentQuote.source}`;
+      
+      // Fade in new quote
+      quoteText.style.opacity = '1';
+      quoteSource.style.opacity = '1';
+      
+      // Move to next quote
+      currentQuoteIndex = (currentQuoteIndex + 1) % islamicQuotes.length;
+    }, 300);
+  }
+}

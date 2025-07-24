@@ -94,3 +94,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Quote transition effects */
+#quote-text, #quote-source {
+  transition: opacity 0.3s ease-in-out;
+}
