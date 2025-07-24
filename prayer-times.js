@@ -27,9 +27,11 @@ class PrayerTimesAPI {
   async getCurrentPrayerTimes(zone = this.currentZone) {
     try {
       const today = new Date();
-      const day = today.getDate();
-      const month = today.getMonth() + 1;
-      const year = today.getFullYear();
+      // Use Malaysian timezone (UTC+8)
+      const malaysianTime = new Date(today.getTime() + (8 * 60 * 60 * 1000));
+      const day = malaysianTime.getUTCDate();
+      const month = malaysianTime.getUTCMonth() + 1;
+      const year = malaysianTime.getUTCFullYear();
 
       const response = await fetch(
         `${this.baseURL}/solat/${zone}/${day}?year=${year}&month=${month}`
@@ -64,8 +66,10 @@ class PrayerTimesAPI {
   getCurrentPrayer(prayerTimes) {
     if (!prayerTimes) return { name: 'Fajr', time: '05:59 AM' };
 
+    // Use Malaysian timezone (UTC+8)
     const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const malaysianTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+    const currentTime = malaysianTime.getUTCHours() * 60 + malaysianTime.getUTCMinutes();
 
     const prayers = [
       { name: 'Fajr', time: prayerTimes.fajr },
@@ -105,8 +109,10 @@ class PrayerTimesAPI {
   getCurrentPrayerInfo(prayerTimes) {
     if (!prayerTimes) return { name: 'Fajr', time: '05:59 AM', status: 'Current Prayer' };
 
+    // Use Malaysian timezone (UTC+8)
     const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const malaysianTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+    const currentTime = malaysianTime.getUTCHours() * 60 + malaysianTime.getUTCMinutes();
 
     const prayers = [
       { name: 'Fajr', time: prayerTimes.fajr },
@@ -166,8 +172,10 @@ class PrayerTimesAPI {
   getNextPrayerCountdown(prayerTimes) {
     if (!prayerTimes) return { nextPrayer: 'Dhuhr', countdown: '00:00:00' };
 
+    // Use Malaysian timezone (UTC+8)
     const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const malaysianTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+    const currentTime = malaysianTime.getUTCHours() * 60 + malaysianTime.getUTCMinutes();
 
     const prayers = [
       { name: 'Fajr', time: prayerTimes.fajr },
@@ -206,7 +214,7 @@ class PrayerTimesAPI {
 
     const hours = Math.floor(minutesUntilNext / 60);
     const minutes = minutesUntilNext % 60;
-    const seconds = 60 - now.getSeconds();
+    const seconds = 60 - malaysianTime.getUTCSeconds();
 
     const countdown = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
@@ -219,9 +227,21 @@ class PrayerTimesAPI {
   // Format Hijri and Gregorian dates
   formatDates(prayerData) {
     if (!prayerData) {
+      // Use Malaysian timezone for fallback
+      const now = new Date();
+      const malaysianTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+      const options = { 
+        weekday: 'short', 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric',
+        timeZone: 'Asia/Kuala_Lumpur'
+      };
+      const gregorianFormatted = malaysianTime.toLocaleDateString('en-US', options);
+      
       return {
         hijri: '26 Muharram 1447',
-        gregorian: 'Tue, 22 Jul 2025'
+        gregorian: gregorianFormatted
       };
     }
 
@@ -238,14 +258,40 @@ class PrayerTimesAPI {
     const hijriYear = hijriParts[0];
     
     // Format Gregorian date
-    const gregorianDate = new Date(prayerData.date);
-    const options = { 
-      weekday: 'short', 
-      day: '2-digit', 
-      month: 'short', 
-      year: 'numeric' 
-    };
-    const gregorianFormatted = gregorianDate.toLocaleDateString('en-US', options);
+    let gregorianFormatted;
+    try {
+      // Try to parse the date from API response
+      if (prayerData.date) {
+        const gregorianDate = new Date(prayerData.date + 'T12:00:00+08:00'); // Use noon to avoid timezone issues
+        const options = { 
+          weekday: 'short', 
+          day: '2-digit', 
+          month: 'short', 
+          year: 'numeric',
+          timeZone: 'Asia/Kuala_Lumpur'
+        };
+        gregorianFormatted = gregorianDate.toLocaleDateString('en-US', options);
+        
+        // Check if the date is valid
+        if (gregorianFormatted === 'Invalid Date' || isNaN(gregorianDate.getTime())) {
+          throw new Error('Invalid date from API');
+        }
+      } else {
+        throw new Error('No date in API response');
+      }
+    } catch (error) {
+      console.log('Date parsing error:', error.message, 'Using current date instead');
+      // Fallback to current Malaysian date
+      const now = new Date();
+      const malaysianTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+      const options = { 
+        weekday: 'short', 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric'
+      };
+      gregorianFormatted = malaysianTime.toLocaleDateString('en-US', options);
+    }
 
     return {
       hijri: `${hijriDay} ${hijriMonth} ${hijriYear}`,
@@ -343,7 +389,9 @@ function showLoadingState() {
 // Update prayer times display
 async function updatePrayerTimes() {
   try {
+    console.log('Fetching prayer times for zone:', prayerAPI.currentZone);
     const currentPrayerData = await prayerAPI.getCurrentPrayerTimes();
+    console.log('Prayer data received:', currentPrayerData);
     
     if (currentPrayerData) {
       // Get current prayer info
@@ -363,6 +411,7 @@ async function updatePrayerTimes() {
 
       // Update dates
       const dates = prayerAPI.formatDates(currentPrayerData);
+      console.log('Formatted dates:', dates);
       document.getElementById('hijri-date').textContent = dates.hijri;
       document.getElementById('gregorian-date').textContent = dates.gregorian;
 
@@ -386,8 +435,14 @@ async function updatePrayerTimes() {
     }
   } catch (error) {
     console.error('Error updating prayer times:', error);
+    console.error('Error details:', error.message);
     // Show error state
     document.getElementById('location').textContent = 'Error loading data';
+    
+    // Show fallback dates
+    const fallbackDates = prayerAPI.formatDates(null);
+    document.getElementById('hijri-date').textContent = fallbackDates.hijri;
+    document.getElementById('gregorian-date').textContent = fallbackDates.gregorian;
   }
 }
 
